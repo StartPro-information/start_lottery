@@ -1,0 +1,4 @@
+﻿display_name,unique_key,employee_id,email,username,department,title,org_path,manager_email
+孙霞洋,UK00001,E00001,user0001@example.com,user0001,市场部,专员,/公司/中国,manager11@example.com
+张晨曦,UK00002,E00002,user0002@example.com,user0002,技术部,工程师,/公司/中国,manager12@example.com
+李婉清,UK00003,E00003,user0003@example.com,user0003,产品部,产品经理,/公司/中国,manager13@example.com

@@ -1,0 +1,456 @@
+.checkin-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.checkin-card {
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  background: var(--card);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.checkin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.checkin-body {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(240px, 1.2fr);
+  gap: 20px;
+  align-items: center;
+}
+
+.qr-box {
+  position: relative;
+  height: 220px;
+  border-radius: 24px;
+  background: #fff;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+}
+
+.qr-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+    linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+  background-size: 12px 12px;
+}
+
+.qr-text {
+  position: relative;
+  font-family: var(--font-display), serif;
+  font-size: 22px;
+  letter-spacing: 3px;
+  color: var(--ink);
+}
+
+.qr-meta {
+  display: grid;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--muted);
+}
+
+.qr-meta div {
+  display: grid;
+  gap: 6px;
+}
+
+.qr-meta strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.rolling {
+  display: grid;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.rolling-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  background: #fffefb;
+  font-size: 14px;
+  animation: float-in 0.6s ease;
+}
+
+.screen-shell {
+  min-height: calc(100vh - var(--dev-credit-h) - 32px);
+  padding: 16px 24px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  grid-template-areas:
+    "actions actions"
+    "qr list";
+  gap: 24px;
+  align-items: stretch;
+}
+
+.screen-top {
+  grid-area: actions;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 6px clamp(28px, 6vh, 64px);
+  border-bottom: none;
+}
+
+.screen-header {
+  display: grid;
+  gap: 6px;
+  grid-column: 2 / 3;
+}
+
+.screen-heading {
+  margin: 0;
+  font-size: 34px;
+  letter-spacing: 3px;
+  color: #ffddb2;
+  font-weight: 700;
+  text-align: center;
+}
+
+.screen-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(157, 176, 199, 0.85);
+}
+
+.screen-connection {
+  justify-self: start;
+}
+
+.screen-actions {
+  display: flex;
+  gap: 10px;
+  justify-self: end;
+}
+
+.screen-actions .btn {
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 12px;
+}
+
+.connection-banner {
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  letter-spacing: 1px;
+  border: 1px solid transparent;
+  background: rgba(8, 12, 18, 0.65);
+}
+
+.connection-banner.is-offline {
+  color: #ffd0cd;
+  border-color: rgba(241, 90, 84, 0.6);
+  background: rgba(241, 90, 84, 0.22);
+}
+
+.connection-banner.is-online {
+  color: #d7f8e7;
+  border-color: rgba(62, 204, 137, 0.65);
+  background: rgba(62, 204, 137, 0.2);
+}
+
+.screen-connection {
+  align-self: center;
+}
+
+.page-host .screen-actions .btn-ghost.screen-link {
+  border-color: rgba(255, 177, 92, 0.75) !important;
+  color: #ffddb2 !important;
+  background: rgba(255, 177, 92, 0.12) !important;
+}
+
+.screen-block {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: 14px;
+  align-content: stretch;
+  padding: 12px;
+  border-radius: 20px;
+  background: rgba(12, 18, 26, 0.55);
+  border: 1px solid rgba(32, 211, 194, 0.18);
+  width: min(900px, 46vw);
+  justify-self: center;
+  height: clamp(660px, 78vh, 880px);
+  margin-bottom: 28px;
+  align-self: start;
+}
+
+.screen-block--qr {
+  grid-area: qr;
+}
+
+.screen-block--list {
+  grid-area: list;
+}
+
+.screen-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(231, 238, 248, 0.98);
+  margin: 0;
+  text-align: center;
+}
+
+.screen-page .checkin-panel--screen {
+  height: 100%;
+}
+
+.screen-page .checkin-panel--screen .checkin-card {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.screen-page .checkin-panel--screen .qr-box {
+  width: min(600px, 86%);
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: 22px;
+  background: radial-gradient(circle at 30% 30%, rgba(32, 211, 194, 0.12), transparent 60%),
+    rgba(8, 12, 18, 0.92);
+  border: none;
+  box-shadow: none;
+}
+
+.screen-page .checkin-panel--screen .qr-image {
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  z-index: 1;
+}
+
+.screen-page .rolling--screen {
+  gap: 10px;
+  align-content: start;
+  height: 100%;
+  overflow: auto;
+  scrollbar-width: none;
+}
+
+.screen-page .rolling--screen::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+.screen-warning {
+  padding: 8px 12px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #ffd0cd;
+  border: 1px solid rgba(241, 90, 84, 0.5);
+  background: rgba(241, 90, 84, 0.18);
+}
+
+.screen-page .rolling-row--screen {
+  grid-template-columns: minmax(0, 1fr) 110px 70px;
+  align-items: center;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid rgba(32, 211, 194, 0.2);
+  background: transparent;
+  color: var(--host-ink);
+  padding: 12px 10px;
+}
+
+.screen-page .rolling-primary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.screen-page .rolling-row--screen strong {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.screen-page .rolling-meta {
+  color: var(--host-muted);
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.screen-page .rolling-status {
+  color: rgba(62, 204, 137, 0.95);
+  font-size: 12px;
+}
+
+.screen-page .rolling-time {
+  color: rgba(255, 248, 230, 0.8);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.screen-page .rolling-row--screen.is-new {
+  border-color: rgba(62, 204, 137, 0.6);
+  box-shadow: 0 0 18px rgba(62, 204, 137, 0.15);
+  animation: float-in 0.6s ease;
+}
+
+.mobile-checkin-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+
+.mobile-checkin-card {
+  width: min(480px, 100%);
+  display: grid;
+  gap: 12px;
+  padding: 24px 20px;
+  border-radius: 18px;
+  background: rgba(12, 18, 26, 0.82);
+  border: 1px solid rgba(32, 211, 194, 0.25);
+}
+
+.mobile-checkin-card h1 {
+  margin: 0;
+  font-size: 24px;
+  letter-spacing: 2px;
+}
+
+.mobile-checkin-card p {
+  margin: 0;
+  color: rgba(157, 176, 199, 0.85);
+  font-size: 14px;
+}
+
+.mobile-checkin-form {
+  display: grid;
+  gap: 12px;
+}
+
+.checkin-result {
+  display: grid;
+  gap: 12px;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px dashed rgba(32, 211, 194, 0.35);
+  background: rgba(8, 12, 18, 0.55);
+  text-align: center;
+}
+
+.checkin-result-title {
+  font-size: 22px;
+  letter-spacing: 2px;
+  color: #e7eef8;
+  font-weight: 700;
+}
+
+.checkin-result-desc {
+  font-size: 13px;
+  color: rgba(157, 176, 199, 0.85);
+}
+
+.mobile-checkin-form label {
+  display: grid;
+  gap: 8px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(157, 176, 199, 0.85);
+  position: relative;
+}
+
+.mobile-checkin-form input {
+  padding: 12px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(32, 211, 194, 0.25);
+  background: rgba(8, 12, 18, 0.9);
+  color: var(--host-ink);
+  font-size: 15px;
+}
+
+.checkin-suggestions {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 5;
+  background: rgba(20, 14, 8, 0.98);
+  border: 1px solid rgba(255, 193, 94, 0.45);
+  border-radius: 12px;
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+}
+
+.checkin-suggestions button {
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 193, 94, 0.25);
+  background: rgba(20, 14, 8, 0.85);
+  color: rgba(255, 248, 230, 0.92);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.checkin-suggestions button:hover {
+  border-color: rgba(255, 193, 94, 0.75);
+  background: rgba(255, 193, 94, 0.15);
+}
+
+.mobile-checkin-form .btn {
+  width: 100%;
+  justify-content: center;
+  font-size: 15px;
+  padding: 12px 16px;
+}
+
+@keyframes float-in {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 900px) {
+  .checkin-body {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .screen-shell {
+    grid-template-columns: 1fr;
+  }
+  .screen-block {
+    min-height: 420px;
+  }
+}
+
+

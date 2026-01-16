@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EventStatus {
+  DRAFT
+  RUNNING
+  ENDED
+  ARCHIVED
+
+  @@map("event_status")
+}
+
+enum RoundStatus {
+  PENDING
+  DRAWN
+  CONFIRMED
+  VOIDED
+
+  @@map("round_status")
+}
+
+enum OrgRole {
+  ADMIN
+  HOST
+  STAFF
+
+  @@map("org_role")
+}
+
+model Event {
+  id                 String        @id @default(uuid()) @db.Uuid
+  tenantId           String         @default("default") @map("tenant_id")
+  name               String
+  status             EventStatus    @default(DRAFT)
+  locked             Boolean        @default(false)
+  requireFinishPrize Boolean        @default(false) @map("require_finish_prize")
+  participantMode    String         @default("csv") @map("participant_mode")
+  requiredFields     Json           @default("[\"display_name\"]") @map("required_fields") @db.JsonB
+  checkinDeviceLimit Boolean        @default(true) @map("checkin_device_limit")
+  customFieldLabel   String?        @map("custom_field_label")
+  createdAt          DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt          DateTime       @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  participants Participant[]
+  prizes       Prize[]
+  rounds       DrawRound[]
+  winners      Winner[]
+  auditLogs    AuditLog[]
+  checkinDevices CheckinDevice[]
+
+  @@map("events")
+}
+
+model Participant {
+  id           String     @id @default(uuid()) @db.Uuid
+  tenantId     String     @default("default") @map("tenant_id")
+  eventId      String     @map("event_id") @db.Uuid
+  displayName  String     @map("display_name")
+  uniqueKey    String?    @map("unique_key")
+  employeeId   String?    @map("employee_id")
+  email        String?
+  username     String?
+  department   String?
+  title        String?
+  orgPath      String?    @map("org_path")
+  customField  String?    @map("custom_field")
+  checkedInAt  DateTime?  @map("checked_in_at") @db.Timestamptz(6)
+  hasWon       Boolean    @default(false) @map("has_won")
+  createdAt    DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  winners Winner[]
+
+  @@unique([tenantId, eventId, uniqueKey])
+  @@index([tenantId, eventId, hasWon])
+  @@map("participants")
+}
+
+model CheckinDevice {
+  id            String   @id @default(uuid()) @db.Uuid
+  tenantId      String   @default("default") @map("tenant_id")
+  eventId       String   @map("event_id") @db.Uuid
+  deviceId      String   @map("device_id")
+  lastCheckinAt DateTime @default(now()) @map("last_checkin_at") @db.Timestamptz(6)
+  createdAt     DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt     DateTime @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  event Event @relation(fields: [eventId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, eventId, deviceId])
+  @@index([tenantId, eventId, lastCheckinAt])
+  @@map("checkin_devices")
+}
+
+model Prize {
+  id             String     @id @default(uuid()) @db.Uuid
+  tenantId       String     @default("default") @map("tenant_id")
+  eventId        String     @map("event_id") @db.Uuid
+  level          String
+  name           String
+  totalCount     Int        @map("total_count")
+  remainingCount Int        @map("remaining_count")
+  orderIndex     Int        @default(0) @map("order_index")
+  createdAt      DateTime   @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  event   Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  rounds  DrawRound[]
+  winners Winner[]
+
+  @@index([tenantId, eventId, orderIndex])
+  @@map("prizes")
+}
+
+model DrawRound {
+  id         String      @id @default(uuid()) @db.Uuid
+  tenantId   String      @default("default") @map("tenant_id")
+  eventId    String      @map("event_id") @db.Uuid
+  prizeId    String      @map("prize_id") @db.Uuid
+  roundNo    Int         @default(1) @map("round_no")
+  drawCount  Int         @map("draw_count")
+  status     RoundStatus @default(PENDING)
+  seedCommit String?     @map("seed_commit")
+  seedReveal String?     @map("seed_reveal")
+  createdAt  DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  event   Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  prize   Prize    @relation(fields: [prizeId], references: [id], onDelete: Cascade)
+  winners Winner[]
+
+  @@index([tenantId, eventId, prizeId, status])
+  @@map("draw_rounds")
+}
+
+model Winner {
+  id            String    @id @default(uuid()) @db.Uuid
+  tenantId      String    @default("default") @map("tenant_id")
+  eventId       String    @map("event_id") @db.Uuid
+  roundId       String    @map("round_id") @db.Uuid
+  prizeId       String    @map("prize_id") @db.Uuid
+  participantId String    @map("participant_id") @db.Uuid
+  createdAt     DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  round       DrawRound   @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  prize       Prize       @relation(fields: [prizeId], references: [id], onDelete: Cascade)
+  participant Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, eventId, prizeId])
+  @@map("winners")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @default("default") @map("tenant_id")
+  eventId   String?  @map("event_id") @db.Uuid
+  actor     String
+  action    String
+  payload   Json     @default("{}") @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  event Event? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, eventId, action])
+  @@map("audit_logs")
+}
+
+model Organization {
+  id        String      @id @default(uuid()) @db.Uuid
+  name      String
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  members      OrgMember[]
+  entitlements Entitlement[]
+
+  @@map("organizations")
+}
+
+model OrgMember {
+  id        String   @id @default(uuid()) @db.Uuid
+  orgId     String   @map("org_id") @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  role      OrgRole
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  organization Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@map("org_members")
+}
+
+model Entitlement {
+  id                    String    @id @default(uuid()) @db.Uuid
+  orgId                 String?   @map("org_id") @db.Uuid
+  tenantId              String?   @map("tenant_id")
+  subscriptionExpiresAt DateTime  @map("subscription_expires_at") @db.Timestamptz(6)
+  maxParticipants       Int       @map("max_participants")
+  dataRetentionDays     Int       @map("data_retention_days")
+  featureFlags          Json      @default("{}") @map("feature_flags") @db.JsonB
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt             DateTime  @default(now()) @map("updated_at") @db.Timestamptz(6)
+
+  organization Organization? @relation(fields: [orgId], references: [id], onDelete: Cascade)
+
+  @@index([orgId])
+  @@index([tenantId])
+  @@map("entitlements")
+}
